@@ -15,16 +15,16 @@ def save_file(file_name, data_list, mode, encoding='utf-8'):
             with open(file_name, 'w', encoding=encoding) as file:
                 for item in data_list:
                     file.write(item + '\n') 
-            print(f'\n✅ "{file_name}"로 저장되었습니다.')
+            print(f'\n "{file_name}"로 저장되었습니다.')
         elif mode == 'binary':
             with open(file_name, 'wb') as file:  
                 for item in data_list:
                     file.write(item.encode(encoding) + b'\n')  # UTF-8로 인코딩하여 저장
-            print(f'\n✅ "{file_name}"로 이진 파일 저장되었습니다.')
+            print(f'\n "{file_name}"로 이진 파일 저장되었습니다.')
     except IOError as e:
-        print(f'❌ 파일 "{file_name}"을 저장하는 중 오류가 발생했습니다: {e}')
+        print(f'  파일 "{file_name}"을 저장하는 중 오류가 발생했습니다: {e}')
     except Exception as e:
-        print(f'❌ 파일 저장 중 예기치 않은 오류 발생: {e}')
+        print(f'  파일 저장 중 예기치 않은 오류 발생: {e}')
 
 
 # 덮어쓰기 처리
@@ -49,11 +49,11 @@ def read_binary_file(file_name):
             for line in file:
                 print(line.decode('utf-8').strip())  # 이진 데이터를 UTF-8로 디코딩하여 출력
     except FileNotFoundError:
-        print(f'❌ 파일 "{file_name}"을 찾을 수 없습니다. 파일명이 올바른지 확인하세요.')
+        print(f'파일 "{file_name}"을 찾을 수 없습니다. 파일명이 올바른지 확인하세요.')
     except IOError as e:
-        print(f'❌ 파일 "{file_name}"을 읽는 중 오류가 발생했습니다: {e}')
+        print(f'파일 "{file_name}"을 읽는 중 오류가 발생했습니다: {e}')
     except Exception as e:
-        print(f'❌ 예기치 않은 오류 발생: {e}')
+        print(f'예기치 않은 오류 발생: {e}')
 
 
 # main
@@ -101,12 +101,12 @@ try:
     read_binary_file(binary_file_name)
 
 except FileNotFoundError:
-    print(f'❌ 파일 "{file_name}"을 찾을 수 없습니다. 파일명이 올바른지 확인하세요.')
+    print(f'파일 "{file_name}"을 찾을 수 없습니다. 파일명이 올바른지 확인하세요.')
 except PermissionError:
-    print(f'❌ 파일 "{file_name}"에 대한 접근 권한이 없습니다. 권한 설정을 확인하세요.')
+    print(f'파일 "{file_name}"에 대한 접근 권한이 없습니다. 권한 설정을 확인하세요.')
 except UnicodeDecodeError:
-    print(f'❌ 파일 "{file_name}"을 UTF-8 인코딩으로 읽을 수 없습니다. 다른 인코딩을 시도해 보세요.')
+    print(f'파일 "{file_name}"을 UTF-8 인코딩으로 읽을 수 없습니다. 다른 인코딩을 시도해 보세요.')
 except IOError as e:
-    print(f'❌ 파일 "{file_name}"을 읽는 중 입출력(IO) 오류가 발생했습니다: {e}')
+    print(f'파일 "{file_name}"을 읽는 중 입출력(IO) 오류가 발생했습니다: {e}')
 except Exception as e:
-    print(f'❌ 예기치 않은 오류 발생: {e}')
+    print(f'예기치 않은 오류 발생: {e}')
