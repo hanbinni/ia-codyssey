@@ -1,0 +1,7 @@
+timestamp,event,message
+2025-03-29 19:03:42,INFO,mars_base_internal_temperature: 24.83
+2025-03-29 19:03:42,INFO,mars_base_external_temperature: 10.5
+2025-03-29 19:03:42,INFO,mars_base_internal_humidity: 58.68
+2025-03-29 19:03:42,INFO,mars_base_external_illuminance: 600.3
+2025-03-29 19:03:42,INFO,mars_base_internal_co2: 0.08
+2025-03-29 19:03:42,INFO,mars_base_internal_oxygen: 4.4
