@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime  # 시간 처리를 위한 라이브러리
 
 LOG_FILE_NAME = "sensor_data.log"
 
@@ -17,13 +17,16 @@ class DummySensor:
 
         # 로그 파일이 존재하는지 확인하고, 없으면 헤더 추가
         try:
-            with open(LOG_FILE_NAME, "r+") as log_file:
+            with open(LOG_FILE_NAME, "a+") as log_file:
+                log_file.seek(0)  # 파일의 시작으로 이동
                 first_line = log_file.readline().strip()  # 첫 줄 읽기
+                
                 if not first_line:  # 파일이 비어 있으면 헤더 추가
                     log_file.write("timestamp,event,message\n")
-        except FileNotFoundError:
-            with open(LOG_FILE_NAME, "w") as log_file:
-                log_file.write("timestamp,event,message\n")
+        except PermissionError:
+            print(f"[오류] {LOG_FILE_NAME} 파일에 대한 접근 권한이 없습니다.")
+        except IOError as e:
+            print(f"[오류] {LOG_FILE_NAME} 파일을 여는 중 오류 발생: {e}")
 
     def set_env(self):
         """랜덤 환경 데이터 설정"""
@@ -47,10 +50,13 @@ class DummySensor:
 
         try:
             with open(LOG_FILE_NAME, "a") as log_file:
-                for message in log_messages:
-                    log_file.write(message + "\n")
-        except Exception as e:
-            print(f"파일 쓰기 오류: {e}")
+                log_file.write("\n".join(log_messages) + "\n")
+        except FileNotFoundError:
+            print(f"[오류] {LOG_FILE_NAME} 파일을 찾을 수 없습니다.")
+        except PermissionError:
+            print(f"[오류] {LOG_FILE_NAME} 파일에 대한 쓰기 권한이 없습니다.")
+        except IOError as e:
+            print(f"[오류] 로그 파일 저장 중 오류 발생: {e}")
 
         return self.env_values
 

@@ -1,7 +1,13 @@
 timestamp,event,message
-2025-03-29 19:03:42,INFO,mars_base_internal_temperature: 24.83
-2025-03-29 19:03:42,INFO,mars_base_external_temperature: 10.5
-2025-03-29 19:03:42,INFO,mars_base_internal_humidity: 58.68
-2025-03-29 19:03:42,INFO,mars_base_external_illuminance: 600.3
-2025-03-29 19:03:42,INFO,mars_base_internal_co2: 0.08
-2025-03-29 19:03:42,INFO,mars_base_internal_oxygen: 4.4
+2025-03-29 19:09:32,INFO,mars_base_internal_temperature: 28.61
+2025-03-29 19:09:32,INFO,mars_base_external_temperature: 2.17
+2025-03-29 19:09:32,INFO,mars_base_internal_humidity: 57.08
+2025-03-29 19:09:32,INFO,mars_base_external_illuminance: 505.73
+2025-03-29 19:09:32,INFO,mars_base_internal_co2: 0.06
+2025-03-29 19:09:32,INFO,mars_base_internal_oxygen: 5.08
+2025-03-29 19:09:40,INFO,mars_base_internal_temperature: 20.45
+2025-03-29 19:09:40,INFO,mars_base_external_temperature: 1.33
+2025-03-29 19:09:40,INFO,mars_base_internal_humidity: 58.3
+2025-03-29 19:09:40,INFO,mars_base_external_illuminance: 603.42
+2025-03-29 19:09:40,INFO,mars_base_internal_co2: 0.09
+2025-03-29 19:09:40,INFO,mars_base_internal_oxygen: 6.71
