@@ -1,0 +1,12 @@
+2025-04-06 15:38:50,INFO,mars_base_internal_temperature 5분 평균: 23.31
+2025-04-06 15:38:50,INFO,mars_base_external_temperature 5분 평균: 11.57
+2025-04-06 15:38:50,INFO,mars_base_internal_humidity 5분 평균: 56.33
+2025-04-06 15:38:50,INFO,mars_base_external_illuminance 5분 평균: 629.43
+2025-04-06 15:38:50,INFO,mars_base_internal_co2 5분 평균: 0.05
+2025-04-06 15:38:50,INFO,mars_base_internal_oxygen 5분 평균: 5.02
+2025-04-06 15:39:00,INFO,mars_base_internal_temperature 5분 평균: 23.64
+2025-04-06 15:39:00,INFO,mars_base_external_temperature 5분 평균: 10.04
+2025-04-06 15:39:00,INFO,mars_base_internal_humidity 5분 평균: 54.38
+2025-04-06 15:39:00,INFO,mars_base_external_illuminance 5분 평균: 570.0
+2025-04-06 15:39:00,INFO,mars_base_internal_co2 5분 평균: 0.06
+2025-04-06 15:39:00,INFO,mars_base_internal_oxygen 5분 평균: 4.83

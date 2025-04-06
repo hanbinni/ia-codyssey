@@ -15,13 +15,13 @@ class DummySensor:
             "mars_base_internal_oxygen": 0.0
         }
 
-        # 로그 파일이 존재하는지 확인하고, 없으면 헤더 추가
+    def initialize_log_file(self):
+        """로그 파일이 존재하지 않거나 비어있으면 헤더 추가"""
         try:
             with open(LOG_FILE_NAME, "a+") as log_file:
-                log_file.seek(0)  # 파일의 시작으로 이동
-                first_line = log_file.readline().strip()  # 첫 줄 읽기
-                
-                if not first_line:  # 파일이 비어 있으면 헤더 추가
+                log_file.seek(0)  # 파일 처음으로 이동
+                first_line = log_file.readline().strip()
+                if not first_line:
                     log_file.write("timestamp,event,message\n")
         except PermissionError:
             print(f"[오류] {LOG_FILE_NAME} 파일에 대한 접근 권한이 없습니다.")
@@ -38,6 +38,7 @@ class DummySensor:
             "mars_base_internal_co2": round(random.uniform(0.02, 0.1), 2),
             "mars_base_internal_oxygen": round(random.uniform(4, 7), 2)
         }
+        return self.env_values
 
     def get_env(self):
         """현재 환경 값을 로그 파일에 저장"""
@@ -60,12 +61,17 @@ class DummySensor:
 
         return self.env_values
 
-# 클래스 인스턴스화
-ds = DummySensor()
 
-# 환경 데이터 설정
-ds.set_env()
+if __name__ == "__main__":
+    # 클래스 인스턴스화
+    ds = DummySensor()
 
-# 환경 값 출력 및 자동 로그 저장
-for key, value in ds.get_env().items():
-    print(f"{key}: {value}")
+    # 로그 파일 초기화 (헤더 추가)
+    ds.initialize_log_file()
+
+    # 환경 데이터 설정
+    ds.set_env()
+
+    # 환경 값 출력 및 자동 로그 저장
+    for key, value in ds.get_env().items():
+        print(f"{key}: {value}")
