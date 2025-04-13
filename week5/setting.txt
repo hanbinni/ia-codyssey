@@ -1,0 +1,11 @@
+[SystemInfo]
+운영체계=true
+운영체계 버전=true
+CPU 타입=true
+CPU 코어 수=true
+메모리 크기 (GB)=true
+호스트 이름=true
+
+[LoadInfo]
+CPU 사용률 (%)=true
+메모리 사용률 (%)=true
