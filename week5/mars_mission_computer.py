@@ -1,10 +1,9 @@
-import platform
-import os
-
+import platform # 시스템 정보 가져오기
+import os # 운영체제 관련 기능
+SETTINGS_FILE = 'setting.txt'
 class MissionComputer:
     # 4주차 부분 생략 
-    def __init__(self, settings_file='setting.txt'):
-        
+    def __init__(self, settings_file=SETTINGS_FILE):
         self.settings = self.load_settings(settings_file)
 
     def load_settings(self, settings_file):
@@ -15,24 +14,38 @@ class MissionComputer:
                 section = None
                 for line in f:
                     line = line.strip()
-                    if line.startswith('['):  # 섹션 구분
+
+                    # 공백 줄 또는 주석(#) 무시
+                    if not line or line.startswith('#'):
+                        continue
+
+                    # 섹션 시작 판별별
+                    if line.startswith('[') and line.endswith(']'):
                         section = line.strip('[]')
                         settings[section] = {}
+                    # 설정 항목 처리
                     elif '=' in line and section:
-                        key, value = line.split('=', 1)
-                        settings[section][key.strip()] = self.parse_boolean(value.strip())
+                        try:
+                            key, value = line.split('=', 1)
+                            settings[section][key.strip()] = self.parse_boolean(value.strip())
+                        except ValueError:
+                            print(f"Invalid line in section [{section}]: {line}") #이상한 형식의 라인 처리
+                    else:
+                        print(f"Ignored line (no section or invalid format): {line}")#키 값이 없는 경우 처리
+
         except Exception as e:
             print(f"Error reading settings file: {e}")
-        
+
         return settings
 
-    def parse_boolean(self, value):
-        """문자열을 True 또는 False로 변환"""
-        return value.lower() == 'true'
+
+    def parse_boolean(self, value):#설정값 boolean으로 변환
+        """문자열을 True 또는 False로 변환 (대소문자 무시, 다양한 표현 허용)"""
+        return value.strip().lower() in ['true', '1', 'yes', 'on']
+
 
     def get_mission_computer_info(self):
         """시스템의 기본 정보를 딕셔너리로 반환"""
-        system = platform.system()
         system_info = {}
 
         # 설정 파일을 순회하며 필요한 정보만 반환
@@ -94,7 +107,7 @@ class MissionComputer:
                 total_memory_bytes = int(line.strip())
                 return round(total_memory_bytes / (1024 ** 3), 2)
 
-    def get_memory_size_linux(self):
+    def get_memory_size_linux(self):#테스트 필요
         """Linux에서 메모리 크기 가져오기"""
         with open('/proc/meminfo', 'r') as meminfo:
             for line in meminfo:
@@ -104,7 +117,7 @@ class MissionComputer:
                         mem_kb = int(parts[1])
                         return round(mem_kb / (1024 ** 2), 2)
 
-    def get_memory_size_macos(self):
+    def get_memory_size_macos(self):#테스트 필요
         """macOS에서 메모리 크기 가져오기"""
         result = os.popen('sysctl hw.memsize').read()
         parts = result.split(':')
@@ -131,15 +144,16 @@ class MissionComputer:
         result = os.popen("wmic cpu get loadpercentage").read().strip().splitlines()
         if len(result) >= 3:
             return int(result[2].strip())
+            
 
-    def get_cpu_usage_linux(self):
+    def get_cpu_usage_linux(self):#테스트 필요
         """Linux에서 CPU 사용률 가져오기"""
         result = os.popen("top -bn1 | grep 'Cpu(s)'").read()
         if result:
             idle = float(result.split('%id')[0].split()[-1])
             return round(100 - idle, 2)
 
-    def get_cpu_usage_macos(self):
+    def get_cpu_usage_macos(self):#테스트 필요
         """macOS에서 CPU 사용률 가져오기"""
         result = os.popen("top -l 1 | grep 'CPU usage'").read()
         if result:
@@ -171,7 +185,7 @@ class MissionComputer:
             used_memory = total_memory - free_memory
             return round((used_memory / total_memory) * 100, 2)
 
-    def get_memory_usage_linux(self):
+    def get_memory_usage_linux(self):#테스트 필요
         """Linux에서 메모리 사용률 가져오기"""
         meminfo = os.popen("cat /proc/meminfo").read()
         lines = meminfo.splitlines()
@@ -180,7 +194,7 @@ class MissionComputer:
         used = mem_total - mem_free
         return round((used / mem_total) * 100, 2)
 
-    def get_memory_usage_macos(self):
+    def get_memory_usage_macos(self):#테스트 필요
         """macOS에서 메모리 사용률 가져오기"""
         total = int(os.popen("sysctl -n hw.memsize").read().strip())
         vm_stat = os.popen("vm_stat").read()
@@ -207,7 +221,6 @@ class MissionComputer:
         print(json_str)
 
 
-# 사용 예제
 if __name__ == '__main__':
     runComputer = MissionComputer()
     

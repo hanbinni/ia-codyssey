@@ -1,5 +1,5 @@
 [SystemInfo]
-운영체계=true
+운영체계=false
 운영체계 버전=true
 CPU 타입=true
 CPU 코어 수=true
