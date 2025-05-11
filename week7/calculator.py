@@ -1,0 +1,370 @@
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton
+from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtGui import QFont
+from styles import get_button_style  # 외부 스타일 함수 사용
+
+
+def split_expression(expr):
+    tokens = []
+    number = ""
+
+    for i, char in enumerate(expr):
+        # 연산자 처리
+        if char in "+×÷":
+            if number:
+                tokens.append(number)
+                number = ""
+            tokens.append(char)
+        # 부호 '-' 처리
+        elif char == "-":
+            # 부호가 수식의 처음이거나 연산자 뒤에 올 때
+            if i == 0 or expr[i - 1] in "+×÷":
+                number += char
+            else:
+                if number:
+                    tokens.append(number)
+                    number = ""
+                tokens.append(char)
+        # '%' 처리: % 기호는 숫자와 구분하여 토큰으로 추가
+        elif char == "%" and number:
+            tokens.append(number)
+            tokens.append("%")
+            number = ""
+        # 숫자나 점은 계속 이어붙이기
+        elif char.isdigit() or char == ".":
+            number += char
+
+    if number:  # 마지막 숫자 처리
+        tokens.append(number)
+
+    return tokens
+
+
+
+def format_number_with_commas(expr):
+    tokens = []
+    number = ""
+    for char in expr:
+        if char in "+-×÷":
+            if number:
+                tokens.append(number)
+                number = ""
+            tokens.append(char)
+        else:
+            number += char
+    if number:
+        tokens.append(number)
+
+    formatted = []
+    for token in tokens:
+        if token not in "+-×÷":
+            try:
+                if token.endswith('%'):
+                    value = token[:-1]
+                    if "." in value:
+                        integer_part, decimal_part = value.split(".")
+                        integer_part = f"{int(integer_part):,}"
+                        formatted.append(f"{integer_part}.{decimal_part}%")
+                    else:
+                        formatted.append(f"{int(value):,}%")
+                elif "." in token:
+                    integer_part, decimal_part = token.split(".")
+                    integer_part = f"{int(integer_part):,}"
+                    formatted.append(f"{integer_part}.{decimal_part}")
+                else:
+                    formatted.append(f"{int(token):,}")
+            except:
+                formatted.append(token)
+        else:
+            formatted.append(token)
+    return "".join(formatted)
+
+
+class IPhoneCalculator(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("iPhone Calculator - PyQt5 Clone")
+        self.setStyleSheet("background-color: black;")
+        self.setFixedSize(360, 600)
+        
+        self.current_input = ""
+        self.display_expression = ""
+        self.result_displayed = False
+
+        self.init_ui()
+
+    def init_ui(self):
+        self.formula = QLabel("")
+        self.formula.setStyleSheet("color: #A5A5A5; font-size: 20px;")
+        self.formula.setAlignment(Qt.AlignRight)
+
+        self.result = QLabel("0")
+        self.result.setStyleSheet("color: white; font-size: 56px; font-weight: bold;")
+        self.result.setAlignment(Qt.AlignRight)
+
+        buttons = [
+            ["AC", "+/-", "%", "÷"],
+            ["7", "8", "9", "×"],
+            ["4", "5", "6", "-"],
+            ["1", "2", "3", "+"],
+            ["⌸", "0", ".", "="]
+        ]
+
+        grid = QGridLayout()
+        grid.setSpacing(10)
+
+        for row, row_data in enumerate(buttons):
+            for col, text in enumerate(row_data):
+                btn = QPushButton(text)
+                btn.setFixedSize(80, 80)
+                btn.setFont(QFont("Helvetica", 20))
+                btn.setStyleSheet(get_button_style(text))
+                btn.clicked.connect(lambda _, t=text: self.on_button_click(t))
+                if text == "AC":
+                    self.clear_btn = btn
+                grid.addWidget(btn, row, col)
+
+        layout = QVBoxLayout()
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.addWidget(self.formula)
+        layout.addWidget(self.result)
+        layout.addSpacing(10)
+        layout.addLayout(grid)
+
+        self.setLayout(layout)
+
+    def adjust_font_size(self, text):
+        length = len(text)
+        if length <= 10:
+            font_size = 56
+        elif length <= 13:
+            font_size = 48
+        elif length <= 15:
+            font_size = 40
+        elif length <= 20:
+            font_size = 32
+        else:
+            font_size = 24  # 너무 긴 텍스트는 더 작은 폰트로
+
+        return font_size
+    
+    def update_display(self):
+        if self.result_displayed:
+            self.result.setText(format_number_with_commas(self.current_input))
+            self.clear_btn.setText("AC")
+        else:
+            self.result.setText(format_number_with_commas(self.display_expression or "0"))
+            self.clear_btn.setText("⌫" if self.display_expression else "AC")
+
+        font_size = self.adjust_font_size(self.result.text())
+    
+        # 폰트 크기 스타일 적용
+        self.result.setStyleSheet(f"color: white; font-size: {font_size}px; font-weight: bold;")
+
+    def get_last_number(self):
+        num = ""
+        for i in range(len(self.display_expression) - 1, -1, -1):
+            c = self.display_expression[i]
+            if c in "+-×÷":
+                # 부호도 숫자의 일부로 인정: 단, 첫 글자면 유지
+                if i == 0:
+                    num = c + num
+                break
+            num = c + num
+        return num
+
+
+
+    def replace_last_number(self, new_val):
+        i = len(self.display_expression) - len(self.get_last_number())
+        self.display_expression = self.display_expression[:i] + new_val
+
+    def evaluate_expression(self):
+        tokens = split_expression(self.display_expression)
+
+        # 1단계: '%' 전처리 — 앞 숫자에 적용
+        i = 0
+        while i < len(tokens):
+            if tokens[i] == "%":
+                if i == 0:
+                    raise ValueError("잘못된 수식입니다: % 앞에 숫자가 없습니다.")
+                try:
+                    percent_value = float(tokens[i - 1]) / 100
+                    tokens[i - 1] = str(percent_value)
+                    tokens.pop(i)  # % 토큰 제거
+                    i -= 1  # 위치 보정
+                except ValueError:
+                    raise ValueError("잘못된 수식입니다: % 앞의 값이 숫자가 아닙니다.")
+            i += 1
+
+
+        try:
+            if not tokens:
+                return "0"
+
+            result = float(tokens[0])
+            i = 1
+            while i < len(tokens):
+                op = tokens[i]
+
+                try:
+                    num = float(tokens[i + 1])
+                except (ValueError, IndexError):
+                    raise ValueError("잘못된 수식입니다.")
+
+                # 연산 처리
+                if op == "+":
+                    result += num
+                elif op == "-":
+                    result -= num
+                elif op == "×":
+                    result *= num
+                elif op == "÷":
+                    if num == 0:
+                        raise ZeroDivisionError("0으로 나눌 수 없습니다.")
+                    result /= num
+
+                i += 2
+
+            # 숫자 범위 예외 처리
+            if result > 1e308 or result < -1e308:
+                raise OverflowError("수학적 범위를 초과했습니다.")
+
+            return (
+            str(int(result))
+            if result.is_integer()
+            else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
+        )
+
+        except ZeroDivisionError:
+            return "DIV_ZERO"
+        except OverflowError:
+            return "OVERFLOW_ERROR"
+        except (ValueError, IndexError):
+            return "SYNTAX_ERROR"
+        except Exception as e:
+            return "Error"
+
+
+    def reset(self):
+        self.display_expression = ""
+        self.current_input = ""
+        self.result_displayed = False
+        self.formula.setText("")
+        self.result.setText("0")
+        self.clear_btn.setText("AC")
+
+    def negative_positive(self):
+        num = self.get_last_number()  # 처음 한 번만 호출
+
+        if num:
+            if num.startswith("-"):
+                num = num[1:]  # 양수를 음수로 변환
+            else:
+                num = "-" + num  # 음수를 양수로 변환
+            self.replace_last_number(num)  # 부호 변경 후 한 번만 호출
+
+            self.update_display()  # 화면 업데이트
+
+    def equal(self):
+        # 수식이 연산자(+, -, ×, ÷)로 끝나는지 체크
+        if self.display_expression[-1] in "+-×÷":
+            return  # 계산할 수 없으므로 아무 작업도 하지 않음
+        
+        # 수식이 숫자 뒤에 .이만 남아있는지 체크 (예: 99. or 99.9)
+        if self.display_expression[-1] == ".":
+            return  # 계산할 수 없으므로 아무 작업도 하지 않음
+
+        # 부호로 시작하는 수식을 처리 (예: -9, +9와 같은 수는 계산 가능)
+        if self.display_expression[0] == "-" and len(self.display_expression) == 1:
+            return  # -9와 같은 수는 계산할 수 없으므로 return
+        
+        result = self.evaluate_expression()
+        if result == "DIV_ZERO":
+            self.formula.setText(format_number_with_commas(self.display_expression))
+            self.result.setText("정의되지 않음")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "SYNTAX_ERROR":
+            self.result.setText("잘못된 수식")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "OVERFLOW_ERROR":
+            self.result.setText("범위를 초과한 수")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "Error":
+            self.result.setText("오류")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        else:
+            self.formula.setText(format_number_with_commas(self.display_expression))
+            self.current_input = result
+            self.result_displayed = True
+            self.update_display()
+
+
+
+    def percent(self):
+        num = self.get_last_number()
+        if num and not num.endswith('%'):
+            self.replace_last_number(num + "%")
+            self.update_display()
+
+    def on_button_click(self, key):
+        if key in "0123456789":
+            if self.result_displayed:
+                self.display_expression = ""
+                self.result_displayed = False
+            self.display_expression += key
+            self.update_display()
+
+        elif key == ".":
+            if self.result_displayed:
+                self.display_expression = "0"
+                self.result_displayed = False
+            if not self.display_expression or self.display_expression[-1] in "+-×÷":
+                self.display_expression += "0."
+            else:
+                last = self.get_last_number()
+                if "." not in last:
+                    self.display_expression += "."
+            self.update_display()
+
+        elif key in ["+", "-", "×", "÷"]:
+            if self.result_displayed:
+                self.display_expression = self.current_input
+                self.result_displayed = False
+            if not self.display_expression:
+                self.display_expression = "0"
+            if self.display_expression[-1:] in "+-×÷":
+                self.display_expression = self.display_expression[:-1] + key
+            else:
+                self.display_expression += key
+            self.update_display()
+
+        elif key == "=":
+            self.equal()
+
+        elif key in ["AC", "⌫"]:
+            if self.clear_btn.text() == "⌫" and self.display_expression:
+                self.display_expression = self.display_expression[:-1]
+                self.update_display()
+            else:
+                self.reset()
+
+        elif key == "+/-":
+            self.negative_positive()
+
+        elif key == "%":
+            self.percent()
+
+
+if __name__ == "__main__":
+    app = QApplication([])
+    calc = IPhoneCalculator()
+    calc.show()
+    app.exec_()
