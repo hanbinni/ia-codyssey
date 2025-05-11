@@ -3,7 +3,6 @@ from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QFont
 from styles import get_button_style  # 외부 스타일 함수 사용
 
-
 def split_expression(expr):
     tokens = []
     number = ""
@@ -38,8 +37,6 @@ def split_expression(expr):
         tokens.append(number)
 
     return tokens
-
-
 
 def format_number_with_commas(expr):
     tokens = []
@@ -78,7 +75,6 @@ def format_number_with_commas(expr):
         else:
             formatted.append(token)
     return "".join(formatted)
-
 
 class IPhoneCalculator(QWidget):
     def __init__(self):
@@ -173,16 +169,27 @@ class IPhoneCalculator(QWidget):
             num = c + num
         return num
 
-
-
     def replace_last_number(self, new_val):
         i = len(self.display_expression) - len(self.get_last_number())
         self.display_expression = self.display_expression[:i] + new_val
 
+    def add(self, a, b):
+        return a + b
+
+    def subtract(self, a, b):
+        return a - b
+
+    def multiply(self, a, b):
+        return a * b
+
+    def divide(self, a, b):
+        if b == 0:
+            raise ZeroDivisionError("0으로 나눌 수 없습니다.")
+        return a / b
+
     def evaluate_expression(self):
         tokens = split_expression(self.display_expression)
 
-        # 1단계: '%' 전처리 — 앞 숫자에 적용
         i = 0
         while i < len(tokens):
             if tokens[i] == "%":
@@ -196,7 +203,6 @@ class IPhoneCalculator(QWidget):
                 except ValueError:
                     raise ValueError("잘못된 수식입니다: % 앞의 값이 숫자가 아닙니다.")
             i += 1
-
 
         try:
             if not tokens:
@@ -214,27 +220,25 @@ class IPhoneCalculator(QWidget):
 
                 # 연산 처리
                 if op == "+":
-                    result += num
+                    result = self.add(result, num)
                 elif op == "-":
-                    result -= num
+                    result = self.subtract(result, num)
                 elif op == "×":
-                    result *= num
+                    result = self.multiply(result, num)
                 elif op == "÷":
-                    if num == 0:
-                        raise ZeroDivisionError("0으로 나눌 수 없습니다.")
-                    result /= num
+                    result = self.divide(result, num)
 
                 i += 2
 
-            # 숫자 범위 예외 처리
+            # 파이썬 최대 자리수 10^308
             if result > 1e308 or result < -1e308:
                 raise OverflowError("수학적 범위를 초과했습니다.")
 
             return (
-            str(int(result))
-            if result.is_integer()
-            else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
-        )
+                str(int(result))
+                if result.is_integer()
+                else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
+            )
 
         except ZeroDivisionError:
             return "DIV_ZERO"
@@ -244,7 +248,6 @@ class IPhoneCalculator(QWidget):
             return "SYNTAX_ERROR"
         except Exception as e:
             return "Error"
-
 
     def reset(self):
         self.display_expression = ""
@@ -268,15 +271,15 @@ class IPhoneCalculator(QWidget):
 
     def equal(self):
         # 수식이 연산자(+, -, ×, ÷)로 끝나는지 체크
-        if self.display_expression[-1] in "+-×÷":
+        if self.display_expression and self.display_expression[-1] in "+-×÷":
             return  # 계산할 수 없으므로 아무 작업도 하지 않음
         
         # 수식이 숫자 뒤에 .이만 남아있는지 체크 (예: 99. or 99.9)
-        if self.display_expression[-1] == ".":
+        if self.display_expression and self.display_expression[-1] == ".":
             return  # 계산할 수 없으므로 아무 작업도 하지 않음
 
         # 부호로 시작하는 수식을 처리 (예: -9, +9와 같은 수는 계산 가능)
-        if self.display_expression[0] == "-" and len(self.display_expression) == 1:
+        if self.display_expression and self.display_expression[0] == "-" and len(self.display_expression) == 1:
             return  # -9와 같은 수는 계산할 수 없으므로 return
         
         result = self.evaluate_expression()
@@ -305,8 +308,6 @@ class IPhoneCalculator(QWidget):
             self.current_input = result
             self.result_displayed = True
             self.update_display()
-
-
 
     def percent(self):
         num = self.get_last_number()
@@ -361,7 +362,9 @@ class IPhoneCalculator(QWidget):
 
         elif key == "%":
             self.percent()
-
+        
+        elif key == "⌸":
+            pass  # 아무 동작도 하지 않음
 
 if __name__ == "__main__":
     app = QApplication([])
