@@ -1,15 +1,17 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton
-from PyQt5.QtCore import Qt, QPoint
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont
-from styles import get_button_style  # 외부 스타일 함수 사용
+from styles import get_button_style
 
+
+# 수식을 분리하여 리스트로 반환
 def split_expression(expr):
     tokens = []
     number = ""
 
     for i, char in enumerate(expr):
         # 연산자 처리
-        if char in "+×÷":
+        if char in "+×÷": 
             if number:
                 tokens.append(number)
                 number = ""
@@ -32,12 +34,29 @@ def split_expression(expr):
         # 숫자나 점은 계속 이어붙이기
         elif char.isdigit() or char == ".":
             number += char
-
     if number:  # 마지막 숫자 처리
         tokens.append(number)
-
     return tokens
 
+# 수식의 마지막 숫자 반환
+def get_last_number(expr):
+    num = ""
+    for i in range(len(expr) - 1, -1, -1):
+        c = expr[i]
+        if c in "+-×÷":
+            if i == 0:
+                num = c + num
+            break
+        num = c + num
+    return num
+
+# 마지막 숫자 교체
+def replace_last_number(expr, new_val):
+    old_val = get_last_number(expr)
+    i = len(expr) - len(old_val)
+    return expr[:i] + new_val
+
+# 1000자리 "," 처리
 def format_number_with_commas(expr):
     tokens = []
     number = ""
@@ -76,8 +95,23 @@ def format_number_with_commas(expr):
             formatted.append(token)
     return "".join(formatted)
 
-class IPhoneCalculator(QWidget):
-    def __init__(self):
+# 자릿수에 따른 버튼 크기 조정 (앱 크기를 고정해놨기에 하드코딩으로 수행 플렉서블할 필요가 없음)
+def adjust_font_size(text):
+    length = len(text)
+    if length <= 10:
+        font_size = 56
+    elif length <= 13:
+        font_size = 48
+    elif length <= 15:
+        font_size = 40
+    elif length <= 20:
+        font_size = 32
+    else:
+        font_size = 24 
+    return font_size
+class Calculator(QWidget):
+    # 초기화
+    def __init__(self): 
         super().__init__()
         self.setWindowTitle("iPhone Calculator - PyQt5 Clone")
         self.setStyleSheet("background-color: black;")
@@ -89,7 +123,8 @@ class IPhoneCalculator(QWidget):
 
         self.init_ui()
 
-    def init_ui(self):
+    # UI 초기화
+    def init_ui(self): 
         self.formula = QLabel("")
         self.formula.setStyleSheet("color: #A5A5A5; font-size: 20px;")
         self.formula.setAlignment(Qt.AlignRight)
@@ -108,7 +143,8 @@ class IPhoneCalculator(QWidget):
 
         grid = QGridLayout()
         grid.setSpacing(10)
-
+        
+        #버튼 생성 및 배치
         for row, row_data in enumerate(buttons):
             for col, text in enumerate(row_data):
                 btn = QPushButton(text)
@@ -129,21 +165,7 @@ class IPhoneCalculator(QWidget):
 
         self.setLayout(layout)
 
-    def adjust_font_size(self, text):
-        length = len(text)
-        if length <= 10:
-            font_size = 56
-        elif length <= 13:
-            font_size = 48
-        elif length <= 15:
-            font_size = 40
-        elif length <= 20:
-            font_size = 32
-        else:
-            font_size = 24  # 너무 긴 텍스트는 더 작은 폰트로
-
-        return font_size
-    
+    # 화면 업데이트
     def update_display(self):
         if self.result_displayed:
             self.result.setText(format_number_with_commas(self.current_input))
@@ -152,169 +174,12 @@ class IPhoneCalculator(QWidget):
             self.result.setText(format_number_with_commas(self.display_expression or "0"))
             self.clear_btn.setText("⌫" if self.display_expression else "AC")
 
-        font_size = self.adjust_font_size(self.result.text())
+        font_size = adjust_font_size(self.result.text())
     
         # 폰트 크기 스타일 적용
         self.result.setStyleSheet(f"color: white; font-size: {font_size}px; font-weight: bold;")
-
-    def get_last_number(self):
-        num = ""
-        for i in range(len(self.display_expression) - 1, -1, -1):
-            c = self.display_expression[i]
-            if c in "+-×÷":
-                # 부호도 숫자의 일부로 인정: 단, 첫 글자면 유지
-                if i == 0:
-                    num = c + num
-                break
-            num = c + num
-        return num
-
-    def replace_last_number(self, new_val):
-        i = len(self.display_expression) - len(self.get_last_number())
-        self.display_expression = self.display_expression[:i] + new_val
-
-    def add(self, a, b):
-        return a + b
-
-    def subtract(self, a, b):
-        return a - b
-
-    def multiply(self, a, b):
-        return a * b
-
-    def divide(self, a, b):
-        if b == 0:
-            raise ZeroDivisionError("0으로 나눌 수 없습니다.")
-        return a / b
-
-    def evaluate_expression(self):
-        tokens = split_expression(self.display_expression)
-
-        i = 0
-        while i < len(tokens):
-            if tokens[i] == "%":
-                if i == 0:
-                    raise ValueError("잘못된 수식입니다: % 앞에 숫자가 없습니다.")
-                try:
-                    percent_value = float(tokens[i - 1]) / 100
-                    tokens[i - 1] = str(percent_value)
-                    tokens.pop(i)  # % 토큰 제거
-                    i -= 1  # 위치 보정
-                except ValueError:
-                    raise ValueError("잘못된 수식입니다: % 앞의 값이 숫자가 아닙니다.")
-            i += 1
-
-        try:
-            if not tokens:
-                return "0"
-
-            result = float(tokens[0])
-            i = 1
-            while i < len(tokens):
-                op = tokens[i]
-
-                try:
-                    num = float(tokens[i + 1])
-                except (ValueError, IndexError):
-                    raise ValueError("잘못된 수식입니다.")
-
-                # 연산 처리
-                if op == "+":
-                    result = self.add(result, num)
-                elif op == "-":
-                    result = self.subtract(result, num)
-                elif op == "×":
-                    result = self.multiply(result, num)
-                elif op == "÷":
-                    result = self.divide(result, num)
-
-                i += 2
-
-            # 파이썬 최대 자리수 10^308
-            if result > 1e308 or result < -1e308:
-                raise OverflowError("수학적 범위를 초과했습니다.")
-
-            return (
-                str(int(result))
-                if result.is_integer()
-                else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
-            )
-
-        except ZeroDivisionError:
-            return "DIV_ZERO"
-        except OverflowError:
-            return "OVERFLOW_ERROR"
-        except (ValueError, IndexError):
-            return "SYNTAX_ERROR"
-        except Exception as e:
-            return "Error"
-
-    def reset(self):
-        self.display_expression = ""
-        self.current_input = ""
-        self.result_displayed = False
-        self.formula.setText("")
-        self.result.setText("0")
-        self.clear_btn.setText("AC")
-
-    def negative_positive(self):
-        num = self.get_last_number()  # 처음 한 번만 호출
-
-        if num:
-            if num.startswith("-"):
-                num = num[1:]  # 양수를 음수로 변환
-            else:
-                num = "-" + num  # 음수를 양수로 변환
-            self.replace_last_number(num)  # 부호 변경 후 한 번만 호출
-
-            self.update_display()  # 화면 업데이트
-
-    def equal(self):
-        # 수식이 연산자(+, -, ×, ÷)로 끝나는지 체크
-        if self.display_expression and self.display_expression[-1] in "+-×÷":
-            return  # 계산할 수 없으므로 아무 작업도 하지 않음
-        
-        # 수식이 숫자 뒤에 .이만 남아있는지 체크 (예: 99. or 99.9)
-        if self.display_expression and self.display_expression[-1] == ".":
-            return  # 계산할 수 없으므로 아무 작업도 하지 않음
-
-        # 부호로 시작하는 수식을 처리 (예: -9, +9와 같은 수는 계산 가능)
-        if self.display_expression and self.display_expression[0] == "-" and len(self.display_expression) == 1:
-            return  # -9와 같은 수는 계산할 수 없으므로 return
-        
-        result = self.evaluate_expression()
-        if result == "DIV_ZERO":
-            self.formula.setText(format_number_with_commas(self.display_expression))
-            self.result.setText("정의되지 않음")
-            self.display_expression = ""
-            self.result_displayed = True
-        elif result == "SYNTAX_ERROR":
-            self.result.setText("잘못된 수식")
-            self.formula.setText("")
-            self.display_expression = ""
-            self.result_displayed = True
-        elif result == "OVERFLOW_ERROR":
-            self.result.setText("범위를 초과한 수")
-            self.formula.setText("")
-            self.display_expression = ""
-            self.result_displayed = True
-        elif result == "Error":
-            self.result.setText("오류")
-            self.formula.setText("")
-            self.display_expression = ""
-            self.result_displayed = True
-        else:
-            self.formula.setText(format_number_with_commas(self.display_expression))
-            self.current_input = result
-            self.result_displayed = True
-            self.update_display()
-
-    def percent(self):
-        num = self.get_last_number()
-        if num and not num.endswith('%'):
-            self.replace_last_number(num + "%")
-            self.update_display()
-
+   
+    # 버튼 클릭 이벤트 처리
     def on_button_click(self, key):
         if key in "0123456789":
             if self.result_displayed:
@@ -364,10 +229,156 @@ class IPhoneCalculator(QWidget):
             self.percent()
         
         elif key == "⌸":
-            pass  # 아무 동작도 하지 않음
+            pass  # 아이폰 계산기에 있길래 그냥 넣어봤습니다.
+        
+    # 이하 연산 메서드
+    def add(self, a, b):
+        return a + b
 
+    def subtract(self, a, b):
+        return a - b
+
+    def multiply(self, a, b):
+        return a * b
+
+    def divide(self, a, b):
+        if b == 0:
+            raise ZeroDivisionError("0으로 나눌 수 없습니다.")
+        return a / b
+
+    # ac 버튼 처리
+    def reset(self):
+        self.display_expression = ""
+        self.current_input = ""
+        self.result_displayed = False
+        self.formula.setText("")
+        self.result.setText("0")
+        self.clear_btn.setText("AC")
+
+    # 부호전환 처리
+    def negative_positive(self):
+        num = self.get_last_number()
+
+        if num:
+            if num.startswith("-"):
+                num = num[1:] 
+            else:
+                num = "-" + num 
+            self.replace_last_number(num)
+
+            self.update_display() 
+            
+    # %연산 처리
+    def percent(self):
+        num = self.get_last_number()
+        if num and not num.endswith('%'):
+            self.replace_last_number(num + "%")
+            self.update_display()                   
+
+    # "=" 결과 출력 메서드
+    def equal(self):
+        # 수식이 연산자(+, -, ×, ÷)로 끝나는지 체크
+        if self.display_expression and self.display_expression[-1] in "+-×÷":
+            return  # 계산할 수 없으므로 아무 작업도 하지 않음
+        
+        # 수식이 숫자 뒤에 .이만 남아있는지 체크 (예: 99. or 99.9)
+        if self.display_expression and self.display_expression[-1] == ".":
+            return  # 계산할 수 없으므로 아무 작업도 하지 않음
+
+        # 부호로 시작하는 수식을 처리 (예: -9, +9와 같은 수는 계산 가능)
+        if self.display_expression and self.display_expression[0] == "-" and len(self.display_expression) == 1:
+            return  # -9와 같은 수는 계산할 수 없으므로 return
+        
+        result = self.evaluate_expression()
+        if result == "DIV_ZERO":
+            self.formula.setText(format_number_with_commas(self.display_expression))
+            self.result.setText("정의되지 않음")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "SYNTAX_ERROR":
+            self.result.setText("잘못된 수식")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "OVERFLOW_ERROR":
+            self.result.setText("범위를 초과한 수")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        elif result == "Error":
+            self.result.setText("오류")
+            self.formula.setText("")
+            self.display_expression = ""
+            self.result_displayed = True
+        else:
+            self.formula.setText(format_number_with_commas(self.display_expression))
+            self.current_input = result
+            self.result_displayed = True
+            self.update_display()
+
+    # 실제 계산 메서드
+    def evaluate_expression(self):
+        tokens = split_expression(self.display_expression)
+        i = 0
+        while i < len(tokens):
+            if tokens[i] == "%":
+                if i == 0:
+                    raise ValueError("잘못된 수식입니다: % 앞에 숫자가 없습니다.")
+                try:
+                    percent_value = float(tokens[i - 1]) / 100
+                    tokens[i - 1] = str(percent_value)
+                    tokens.pop(i)  # % 토큰 제거
+                    i -= 1  # 위치 보정
+                except ValueError:
+                    raise ValueError("잘못된 수식입니다: % 앞의 값이 숫자가 아닙니다.")
+            i += 1
+        try:
+            if not tokens:
+                return "0"
+
+            result = float(tokens[0])
+            i = 1
+            while i < len(tokens):
+                op = tokens[i]
+
+                try:
+                    num = float(tokens[i + 1])
+                except (ValueError, IndexError):
+                    raise ValueError("잘못된 수식입니다.")
+
+                # 연산 처리
+                if op == "+":
+                    result = self.add(result, num)
+                elif op == "-":
+                    result = self.subtract(result, num)
+                elif op == "×":
+                    result = self.multiply(result, num)
+                elif op == "÷":
+                    result = self.divide(result, num)
+
+                i += 2
+
+            # 파이썬 최대 자리수 10^308
+            if result > 1e308 or result < -1e308:
+                raise OverflowError("수학적 범위를 초과했습니다.")
+
+            return (
+                str(int(result))
+                if result.is_integer()
+                else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
+            )
+
+        except ZeroDivisionError:
+            return "DIV_ZERO"
+        except OverflowError:
+            return "OVERFLOW_ERROR"
+        except (ValueError, IndexError):
+            return "SYNTAX_ERROR"
+        except Exception as e:
+            return "Error"
+    
 if __name__ == "__main__":
     app = QApplication([])
-    calc = IPhoneCalculator()
+    calc = Calculator()
     calc.show()
     app.exec_()

@@ -1,13 +1,14 @@
+#애플리케이션 객체 생성, 기본 클래스, 화면에 표시, 버튼 생성, 격자 레이아웃, 세로 레이아웃웃
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QGridLayout, QVBoxLayout
-from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QFont
+from PyQt5.QtCore import Qt #정렬
+from PyQt5.QtGui import QFont #폰트
 from styles import get_button_style 
 
 
-def split_expression(expr): # 연산자 기준으로 수식 분리
+def split_expression(expr): # 연산자 기준으로 수식 분리 12+3.4 -> ['12', '+', '3.4']
 
-    tokens = []
-    number = ""
+    tokens = [] # 결과 리스트
+    number = "" # 현재 숫자 저장 변수
     for char in expr:
         if char in "+-×÷":
             if number:
@@ -30,7 +31,7 @@ def format_number_with_commas(expr): # 1000단위 쉼표 추가
             try:
                 if "." in token:
                     integer_part, decimal_part = token.split(".")
-                    integer_part = f"{int(integer_part):,}"
+                    integer_part = f"{int(integer_part):,}" # 1000단위마다 쉼표 추가
                     formatted.append(f"{integer_part}.{decimal_part}")
                 else:
                     formatted.append(f"{int(token):,}")
@@ -48,14 +49,15 @@ class IPhoneCalculator(QWidget):
         - 윈도우 타이틀, 크기 설정
         - 계산기 상태 변수 초기화
         """
-        super().__init__()
-        self.setWindowTitle("iPhone Calculator - PyQt5 Clone")
+        super().__init__() # QWidget 상속, 초기화
+        self.setWindowTitle("Calculator")
         self.setStyleSheet("background-color: black;")
         self.setFixedSize(360, 600)
 
-        self.current_input = ""
-        self.display_expression = ""
-        self.result_displayed = False
+        self.current_input = "" # 입력창
+        self.display_expression = "" # 수식창
+        self.result_displayed = False # "=" 버튼 클릭 여부
+
 
         self.init_ui()
 
@@ -87,7 +89,7 @@ class IPhoneCalculator(QWidget):
                 btn = QPushButton(text)
                 btn.setFixedSize(80, 80)
                 btn.setFont(QFont("Helvetica", 20))
-                btn.setStyleSheet(get_button_style(text))
+                btn.setStyleSheet(get_button_style(text)) #styles 에서 가져옴옴
                 btn.clicked.connect(lambda _, t=text: self.on_button_click(t))
                 if text == "AC":
                     self.clear_btn = btn
@@ -130,7 +132,7 @@ class IPhoneCalculator(QWidget):
     def on_button_click(self, key): # 사칙연산,= 처리 함수
         
         if key in "0123456789":
-            if self.result_displayed:
+            if self.result_displayed: #
                 self.display_expression = ""
                 self.result_displayed = False
             self.display_expression += key
