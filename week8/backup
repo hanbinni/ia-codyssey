@@ -1,63 +1,40 @@
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QFont
 from styles import get_button_style  # 외부 스타일 함수 사용
 
-# 자릿수에 따른 버튼 크기 조정 (앱 크기를 고정해놨기에 하드코딩으로 수행 플렉서블할 필요가 없음)
-def adjust_font_size(text):
-    length = len(text)
-    if length <= 10:
-        font_size = 56
-    elif length <= 13:
-        font_size = 48
-    elif length <= 15:
-        font_size = 40
-    elif length <= 20:
-        font_size = 32
-    else:
-        font_size = 24 
-    return font_size 
-
-# 입력값을 분할하는 메서드
+# 수식을 분리하여 리스트로 반환
 def split_expression(expr):
     tokens = []
     number = ""
-    i = 0
 
-    while i < len(expr):
-        char = expr[i]
-
-        # 숫자나 '.'은 계속 누적
-        if char.isdigit() or char == '.':
-            number += char
-
-        # 부호 '-' 처리
-        elif char == "-":
-            # '-'가 맨 앞이거나 연산자 뒤일 경우, 음수 시작
-            if i == 0 or expr[i - 1] in "+-×÷":
-                number += char  # 음수 부호로 누적
-            else:
-                if number:
-                    tokens.append(number)
-                    number = ""
-                tokens.append("-")
-
+    for i, char in enumerate(expr):
         # 연산자 처리
-        elif char in "+×÷":
+        if char in "+×÷": 
             if number:
                 tokens.append(number)
                 number = ""
             tokens.append(char)
-
-        # % 처리
+        # 부호 '-' 처리
+        elif char == "-":
+            # 부호가 수식의 처음이거나 연산자 뒤에 올 때
+            if i == 0 or expr[i - 1] in "+×÷":
+                number += char
+            else:
+                if number:
+                    tokens.append(number)
+                    number = ""
+                tokens.append(char)
+        # '%' 처리: % 기호는 숫자와 구분하여 토큰으로 추가
         elif char == "%" and number:
             tokens.append(number)
             tokens.append("%")
             number = ""
+        # 숫자나 점은 계속 이어붙이기
+        elif char.isdigit() or char == ".":
+            number += char
 
-        i += 1
-
-    if number:
+    if number:  # 마지막 숫자 처리
         tokens.append(number)
 
     return tokens
@@ -100,61 +77,6 @@ def format_number_with_commas(expr):
         else:
             formatted.append(token)
     return "".join(formatted)
-
-# 마지막 숫자 대체하기 (부호전환 ,퍼센트, 소수점 를 위해)
-def replace_last_number(display_expression, new_val):
-    last_number = get_last_number(display_expression)
-    i = len(display_expression) - len(last_number)
-    return display_expression[:i] + new_val
-
-# 마지막 숫자 가져오기 (부호전환 및 퍼센트 처리를 위해)
-def get_last_number(expr):
-    num = ""
-    i = len(expr) - 1
-    paren_count = 0
-    while i >= 0:
-        c = expr[i]
-        if c == ")":
-            paren_count += 1
-            num = c + num
-        elif c == "(":
-            paren_count -= 1
-            num = c + num
-            if paren_count <= 0:
-                break
-        elif c in "+-×÷" and paren_count == 0:
-            break
-        else:
-            num = c + num
-        i -= 1
-    return num
-
-# 음수의 괄호 계산 처리
-def preprocess_expression(expr):
-    new_expr = ""
-    i = 0
-    print("원래 수식:", expr)
-
-    while i < len(expr):
-        if expr[i:i+2] == "(-":
-            i += 2
-            num = ""
-            while i < len(expr) and (expr[i].isdigit() or expr[i] == "." or expr[i] == "%"):
-                num += expr[i]
-                i += 1
-
-            if i < len(expr) and expr[i] == ")":
-                new_expr += "-" + num
-                i += 1
-            else:
-                new_expr += "(-" + num
-        else:
-            new_expr += expr[i]
-            i += 1
-
-    return new_expr
-
-
 
 class Calculator(QWidget):
     def __init__(self): # 초기화
@@ -219,10 +141,25 @@ class Calculator(QWidget):
             self.result.setText(format_number_with_commas(self.display_expression or "0"))
             self.clear_btn.setText("⌫" if self.display_expression else "AC")
 
-        font_size = adjust_font_size(self.result.text())
+        font_size = self.adjust_font_size(self.result.text())
     
         # 폰트 크기 스타일 적용
         self.result.setStyleSheet(f"color: white; font-size: {font_size}px; font-weight: bold;")      
+        
+    # 자릿수에 따른 버튼 크기 조정 (앱 크기를 고정해놨기에 하드코딩으로 수행 플렉서블할 필요가 없음)
+    def adjust_font_size(self, text):
+        length = len(text)
+        if length <= 10:
+            font_size = 56
+        elif length <= 13:
+            font_size = 48
+        elif length <= 15:
+            font_size = 40
+        elif length <= 20:
+            font_size = 32
+        else:
+            font_size = 24 
+        return font_size     
          
     # 버튼 클릭 이벤트 처리
     def on_button_click(self, key):
@@ -240,7 +177,7 @@ class Calculator(QWidget):
             if not self.display_expression or self.display_expression[-1] in "+-×÷":
                 self.display_expression += "0."
             else:
-                last = get_last_number(self.display_expression)
+                last = self.get_last_number()
                 if "." not in last:
                     self.display_expression += "."
             self.update_display()
@@ -276,6 +213,24 @@ class Calculator(QWidget):
         elif key == "⌸":
             pass  # 아이폰 계산기에 있길래 그냥 넣어봤습니다.
 
+    # 마지막 숫자 가져오기 (부호전환, 퍼센트, 소수점 처리에 사용용)
+    def get_last_number(self):
+        num = ""
+        for i in range(len(self.display_expression) - 1, -1, -1):
+            c = self.display_expression[i]
+            if c in "+-×÷":
+                # 부호도 숫자의 일부로 인정: 단, 첫 글자면 유지
+                if i == 0:
+                    num = c + num
+                break
+            num = c + num
+        return num
+    
+    # 마지막 숫자 대체하기 (부호전환 및 퍼센트 처리를 위해해)
+    def replace_last_number(self, new_val):
+        i = len(self.display_expression) - len(self.get_last_number())
+        self.display_expression = self.display_expression[:i] + new_val
+
     # 이하 연산 메서드드
     def add(self, a, b):
         return a + b
@@ -302,20 +257,22 @@ class Calculator(QWidget):
 
     # 부호전환 처리
     def negative_positive(self):
-        num = get_last_number(self.display_expression)
+        num = self.get_last_number()
+
         if num:
-            if num.startswith("(-") and num.endswith(")"):
-                num = num[2:-1]
+            if num.startswith("-"):
+                num = num[1:] 
             else:
-                num = f"(-{num})"
-            self.display_expression = replace_last_number(self.display_expression, num)
-            self.update_display()
-    
-    # 백분율 처리      
+                num = "-" + num 
+            self.replace_last_number(num)
+
+            self.update_display() 
+            
+    # %연산 처리
     def percent(self):
-        num = get_last_number(self.display_expression)
+        num = self.get_last_number()
         if num and not num.endswith('%'):
-            self.display_expression = replace_last_number(self.display_expression, num + "%")
+            self.replace_last_number(num + "%")
             self.update_display()
             
     # "=" 결과 출력 메서드
@@ -358,12 +315,10 @@ class Calculator(QWidget):
             self.current_input = result
             self.result_displayed = True
             self.update_display()
-            
-    # 실제 계산 처리 메서드
-    def evaluate_expression(self):
-        expr = preprocess_expression(self.display_expression)  # 음수 괄호 제거
-        tokens = split_expression(expr)
 
+    # 실제 계산 메서드
+    def evaluate_expression(self):
+        tokens = split_expression(self.display_expression)
         i = 0
         while i < len(tokens):
             if tokens[i] == "%":
@@ -372,18 +327,16 @@ class Calculator(QWidget):
                 try:
                     percent_value = float(tokens[i - 1]) / 100
                     tokens[i - 1] = str(percent_value)
-                    tokens.pop(i)
-                    i -= 1
+                    tokens.pop(i)  # % 토큰 제거
+                    i -= 1  # 위치 보정
                 except ValueError:
                     raise ValueError("잘못된 수식입니다: % 앞의 값이 숫자가 아닙니다.")
             i += 1
-
         try:
             if not tokens:
                 return "0"
 
             result = float(tokens[0])
-
             i = 1
             while i < len(tokens):
                 op = tokens[i]
@@ -393,6 +346,7 @@ class Calculator(QWidget):
                 except (ValueError, IndexError):
                     raise ValueError("잘못된 수식입니다.")
 
+                # 연산 처리
                 if op == "+":
                     result = self.add(result, num)
                 elif op == "-":
@@ -402,15 +356,17 @@ class Calculator(QWidget):
                 elif op == "÷":
                     result = self.divide(result, num)
 
-
                 i += 2
 
+            # 파이썬 최대 자리수 10^308
             if result > 1e308 or result < -1e308:
                 raise OverflowError("수학적 범위를 초과했습니다.")
 
-            final_result = str(int(result)) if result.is_integer() else format(round(result, 6), ".15g")
-            print(f"Final result: {final_result}")  # 최종 결과
-            return final_result
+            return (
+                str(int(result))
+                if result.is_integer()
+                else format(round(result, 6), ".15g")  # 최대 유효 숫자 15자리까지 불필요한 0 제거
+            )
 
         except ZeroDivisionError:
             return "DIV_ZERO"
@@ -419,9 +375,7 @@ class Calculator(QWidget):
         except (ValueError, IndexError):
             return "SYNTAX_ERROR"
         except Exception as e:
-            print(f"Error occurred: {e}")  # 예외 발생 시 오류 메시지
             return "Error"
-
 
 if __name__ == "__main__":
     app = QApplication([])
