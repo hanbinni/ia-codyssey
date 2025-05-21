@@ -133,7 +133,6 @@ def get_last_number(expr):
 def preprocess_expression(expr):
     new_expr = ""
     i = 0
-    print("원래 수식:", expr)
 
     while i < len(expr):
         if expr[i:i+2] == "(-":
@@ -409,7 +408,6 @@ class Calculator(QWidget):
                 raise OverflowError("수학적 범위를 초과했습니다.")
 
             final_result = str(int(result)) if result.is_integer() else format(round(result, 6), ".15g")
-            print(f"Final result: {final_result}")  # 최종 결과
             return final_result
 
         except ZeroDivisionError:
