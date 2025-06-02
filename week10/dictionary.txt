@@ -1,6 +1,6 @@
-mars python code
+python code
 cipher, encryption, security, secret,
 decrypt
-password
+password  mars
 key
 shift rotate
