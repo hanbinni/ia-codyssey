@@ -1,0 +1,12 @@
+=== 시저 암호 해독 결과 ===
+사용한 키 : 19
+
+[원본 암호문]
+B EHOX FTKL
+
+[해독된 평문]
+I LOVE MARS
+
+[암호표 (Cipher Table)]
+암호 알파벳 : A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+해독 알파벳 : H I J K L M N O P Q R S T U V W X Y Z A B C D E F G

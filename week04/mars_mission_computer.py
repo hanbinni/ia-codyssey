@@ -117,7 +117,7 @@ class MissionComputer:
 
 # 실행부
 if __name__ == "__main__":
-    from week3 import DummySensor
+    from week03 import DummySensor
 
     try:
         dummy_sensor = DummySensor()
