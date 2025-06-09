@@ -14,7 +14,7 @@ model = whisper.load_model(MODEL_NAME, device=device)
 
 # 경로
 RECORD_DIR = '../week10/records'
-OUTPUT_DIR = '../week11/test'
+OUTPUT_DIR = 'csvdir'
 
 # 녹음 처리
 SAMPLE_RATE = 44100
