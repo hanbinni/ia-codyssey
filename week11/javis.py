@@ -33,7 +33,7 @@ def preprocess_audio(file_path):
     audio = audio.set_frame_rate(16000)
 
     gain = 0 if audio.dBFS == float("-inf") else -audio.dBFS
-    audio = audio.apply_gain(gain)
+    audio = audio.apply_gain(gain) # 오디오 볼륨 정규화
 
     # 원래 파일 이름 기준으로 새로운 파일명 생성
     base, _ = os.path.splitext(file_path)
@@ -49,8 +49,8 @@ def transcribe_audio(file_path):
     segments = result.get("segments", [])
     return [
         {
-            "time": f"{round(seg['start'], 2)}s",
-            "text": seg['text'].strip()
+            "time": f"{round(seg['start'], 2)}s", # 음성 시작 시간
+            "text": seg['text'].strip() # 텍스트 빈칸 처리
         }
         for seg in segments
     ]
@@ -85,13 +85,17 @@ def run_stt_on_files():
     for filename in files:
         print(f"🎙 처리 중: {filename}")
         input_path = os.path.join(RECORD_DIR, filename)
+        # 전처리 없이 원본 그대로 사용 (정확도 더 나음)
+        # processed_path = preprocess_audio(input_path)
+        # transcription = transcribe_audio(processed_path)
+        #os.remove(processed_path)
 
         transcription = transcribe_audio(input_path)
 
         base_name = os.path.splitext(filename)[0]
         csv_path = os.path.join(OUTPUT_DIR, base_name + ".csv")
 
-        # pandas 없이 CSV 파일 저장
+        #  CSV 파일 저장
         with open(csv_path, 'w', encoding='utf-8-sig') as f:
             f.write("time,text\n")
             for row in transcription:
