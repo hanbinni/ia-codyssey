@@ -1,0 +1,152 @@
+[INFO] 🚀 mars_weather 테이블 생성 프로세스 시작
+[INFO] ✅ MySQL 연결 성공
+[INFO] ✅ 테이블 생성 완료 또는 이미 존재함
+[INFO] 🔒 MySQL 연결 종료됨
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ⛔ 사용자에 의해 DB 생성을 중단했습니다.
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ⏭️ 테이블 생성 건너뜀
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🗑️ 데이터베이스 'weather_db' 삭제 완료
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🗑️ 데이터베이스 'weather_db' 삭제 완료
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] 🗑️ 테이블 'mars_weather' 삭제 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ⏭️ 테이블 생성 건너뜀
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] 🗑️ 테이블 'mars_weather' 삭제 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ⛔ 사용자에 의해 DB 삭제 및 재생성 취소됨
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ↩️ 이전 질문으로 돌아갑니다.
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] 🗑️ 테이블 'mars_weather' 삭제 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ⏭️ 테이블 생성 건너뜀
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ↩️ 이전 질문으로 돌아갑니다.
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] ⏭️ 테이블 생성 건너뜀
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ⚠️ 테이블 'mars_weather'가 이미 존재합니다.
+[INFO] 🗑️ 테이블 'mars_weather' 삭제 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ↩️ 이전 질문으로 돌아갑니다.
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🗑️ 데이터베이스 'weather_db' 삭제 완료
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] ℹ️ 기존 DB 사용 선택됨
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🔒 MySQL 연결 종료
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[ERROR] ❌ MySQL 연결 실패 (raw): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[ERROR] ❌ MySQL 연결 실패 (with DB): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[ERROR] ❌ MySQL 연결 실패 (raw): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[ERROR] ❌ MySQL 연결 실패 (with DB): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[ERROR] ❌ MySQL 연결 실패 (raw): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[ERROR] ❌ MySQL 연결 실패 (with DB): 2003 (HY000): Can't connect to MySQL server on 'localhost:3306' (61)
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[ERROR] ❌ MySQL 연결 실패 (raw): 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+[ERROR] ❌ MySQL 연결 실패 (with DB): 1045 (28000): Access denied for user 'root'@'localhost' (using password: YES)
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🏁 프로세스 종료
+[INFO] 🚀 DB 및 테이블 생성 프로세스 시작
+[INFO] ⚠️ 데이터베이스 'weather_db'가 이미 존재합니다.
+[INFO] 🗑️ 데이터베이스 'weather_db' 삭제 완료
+[INFO] ✅ 데이터베이스 'weather_db' 생성 완료
+[INFO] ✅ 테이블 생성 완료
+[INFO] 🏁 프로세스 종료

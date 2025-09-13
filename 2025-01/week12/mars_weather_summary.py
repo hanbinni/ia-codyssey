@@ -28,6 +28,14 @@ class MySQLHelper:
         except Error as e:
             print(f"❌ 데이터베이스 연결 실패: {e}")
             return False
+    # 종료
+    def close(self):
+        """DB 연결 종료"""
+        if self.cursor:
+            self.cursor.close()
+        if self.conn and self.conn.is_connected():
+            self.conn.close()
+
     # 현제 코드 특화 삽입 쿼리
     def insert_data(self, rows):
         query = "INSERT INTO mars_weather (mars_date, temp, storm) VALUES (%s, %s, %s)"
@@ -50,6 +58,7 @@ class MySQLHelper:
 
         self.conn.commit()
         print(f"\n✅ 삽입 완료: {success_count}건 성공, {fail_count}건 실패")
+
     #select
     def execute_query(self, query, params=None):
         try:
@@ -65,13 +74,6 @@ class MySQLHelper:
             self.conn.commit()
         except Error as e:
             print(f"❌ 실행 오류: {e}")
-    # 종료
-    def close(self):
-        """DB 연결 종료"""
-        if self.cursor:
-            self.cursor.close()
-        if self.conn and self.conn.is_connected():
-            self.conn.close()
 
 
 # 파일 로드
