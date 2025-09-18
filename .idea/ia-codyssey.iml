@@ -5,7 +5,7 @@
       <excludeFolder url="file://$MODULE_DIR$/week11/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/week12/.venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.10 (ia-codyssey) (2)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.13" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PyDocumentationSettings">

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>한송이 — MARS: 우주 해적 관측 기록</title>
+  <style>
+    :root{
+      --bg: #0a0c14;
+      --bg-2: #0f1322;
+      --bg-soft: #0d1020;
+      --fg: #e8f1ff;
+      --muted: #9bb3d1;
+      --accent: #66e4ff;
+      --accent-2: #ff7af5;
+      --accent-warn: #ffb86b;
+      --card: #12162a;
+      --radius: 20px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100%;background:var(--bg);}
+    body{
+      color:var(--fg);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", Arial, sans-serif;
+      line-height:1.6;
+      overflow-x:hidden;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+    }
+
+    /* 가벼운 별 배경 (정적 + 투명도) */
+    body::before{
+      content:"";
+      position:fixed;inset:0;z-index:-1;
+      background-image:
+        radial-gradient(1px 1px at 20px 30px,#fff 70%,transparent 71%),
+        radial-gradient(1px 1px at 120px 80px,#aef 70%,transparent 71%),
+        radial-gradient(1px 1px at 220px 180px,#cfdfff 70%,transparent 71%);
+      background-size:200px 200px;
+      opacity:.2;
+    }
+
+    .wrap{max-width:1100px; margin:0 auto; padding: 32px 20px 80px}
+
+    header{
+      position:relative; margin: 24px 0 28px; padding: 22px; border-radius: var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .badge{
+      display:inline-block; padding:6px 12px; border-radius:999px;
+      font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#001920;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    h1{margin:10px 0 8px; font-size: clamp(28px, 4vw, 48px); line-height:1.1; letter-spacing:.02em; color:var(--accent);}
+    .subtitle{color:var(--muted); font-size: clamp(14px, 1.8vw, 18px)}
+
+    nav{margin: 10px 0 2px; display:flex; flex-wrap:wrap; gap:10px}
+    nav a{padding:10px 14px; border-radius:12px; color:var(--fg); text-decoration:none; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.02); font-weight:600; font-size:14px; transition: background .2s;}
+    nav a:hover{ background: rgba(255,255,255,.08) }
+
+    section{margin: 26px 0}
+    .grid{ display:grid; gap:18px }
+    @media (min-width: 820px){ .grid.cols-2{ grid-template-columns: 1fr 1fr } }
+
+    .card{background: rgba(255,255,255,.02); border:1px solid rgba(255,255,255,.06); border-radius: var(--radius); padding: 18px;}
+    .card h3{ margin: 4px 0 8px; font-size: 18px }
+    .card p{ color:var(--muted); margin:0 }
+
+    .terminal{background: #0b0f19; border-radius: 14px; border:1px solid rgba(102,228,255,.2); overflow:hidden}
+    .term-head{ display:flex; gap:8px; align-items:center; padding:10px 12px; background:#0e1424; border-bottom:1px solid rgba(255,255,255,.06) }
+    .dot{ width:10px; height:10px; border-radius:50%; background:#ff5f56; box-shadow: 20px 0 0 #ffbd2e, 40px 0 0 #27c93f }
+    .term-body{ padding: 14px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size:14px; line-height:1.6; color:#c8e5ff }
+    .prompt{ color:#7dcfff }
+
+    details{ border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px; background: rgba(255,255,255,.02) }
+    summary{ cursor:pointer; font-weight:700; color: var(--accent) }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px }
+    .chip{ border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.02); padding:8px 12px; border-radius:999px; font-size:12px; color:var(--muted) }
+
+    .bar{ position:relative; height:10px; background:#0a0e18; border-radius:999px; border:1px solid rgba(255,255,255,.06); overflow:hidden }
+    .bar > i{ display:block; height:100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width:60% }
+
+    footer{ margin-top:32px; padding:18px; color:var(--muted); text-align:center; opacity:.85 }
+    .tiny{ font-size:12px }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <span class="badge">MARS OUTPOST · SOLARIS-37</span>
+      <h1>우주 해적 관측 기록</h1>
+      <p class="subtitle">주체: <strong>식물학 연구원 한송이</strong> · 상태: 고립 · 위치: 아레스로도 협곡 북단 임시 거점</p>
+      <nav>
+        <a href="#about">배경</a>
+        <a href="#pirates">해적 도감</a>
+        <a href="#signals">통신·신호</a>
+        <a href="#logs">탐사 로그</a>
+        <a href="#specs">설비/규약</a>
+      </nav>
+    </header>
+
+    <section id="about" class="grid cols-2">
+      <div class="card">
+        <h3>상황 보고</h3>
+        <p>지구와의 장거리 통신은 간헐적으로 복구됨. 산소·물 재활용은 안정적이나 식량은 <em>T-87일</em> 잔여.</p>
+        <div class="chips">
+          <span class="chip">#식물 배양 돔</span>
+          <span class="chip">#저전력 통신</span>
+          <span class="chip">#우주 해적 관측</span>
+          <span class="chip">#생존 로그</span>
+        </div>
+      </div>
+      <div class="terminal">
+        <div class="term-head"><div class="dot"></div> <strong>mars://console</strong></div>
+        <div class="term-body">
+          <div><span class="prompt">han-song-i@ares37</span>:~$ whoami</div>
+          <div>han_song_i — Botanist</div>
+          <div><span class="prompt">$</span> echo "해적은 실제일까?"</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="pirates" class="card">
+      <h3>우주 해적 도감 (비공식)</h3>
+      <p>관측 기반 비공식 데이터, 신뢰도는 항목별 표기.</p>
+      <ul>
+        <li><strong>『나이트포지』</strong> — 그림자 접근, 열 신호 최소화. 신뢰도: ★★★★☆</li>
+        <li><strong>『레드문 레이스』</strong> — 폐 궤도선 개조 선단. 신뢰도: ★★★☆☆</li>
+        <li><strong>프로토콜: 블랙샌드</strong> — 모래폭풍 전후 고주파 잡음. 신뢰도: ★★☆☆☆</li>
+        <li><strong>장비: 분광 위장막</strong> — 열 분산 위장. 신뢰도: ★★★★★</li>
+      </ul>
+    </section>
+
+    <section id="signals" class="grid cols-2">
+      <div class="card">
+        <h3>통신 안정도</h3>
+        <div class="bar"><i></i></div>
+      </div>
+      <div class="card">
+        <h3>생존 지표</h3>
+        <ul>
+          <li>산소 루프: 안정</li>
+          <li>수분 회수율: 87~92%</li>
+          <li>식량 배양: 돔 2기 가동</li>
+          <li>전력: 태양광+연료전지</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="logs" class="card">
+      <h3>탐사 로그</h3>
+      <div class="terminal">
+        <div class="term-head"><div class="dot"></div> <strong>LOG // SOL 218</strong></div>
+        <div class="term-body">
+          04:20 — 북벽 음영지대 금속 반사.<br>
+          04:58 — 패턴 A 유사 펄스 2회.<br>
+          05:12 — 붉은 먼지 상승. 흔적 소거.
+        </div>
+      </div>
+    </section>
+
+    <section id="specs" class="grid cols-2">
+      <div class="card">
+        <h3>현장 규약</h3>
+        <ol>
+          <li>외부 출입 전 연결-전력-기압 점검.</li>
+          <li>미확인 신호는 수동 기록, 재생 금지.</li>
+          <li>추정은 로그에 남기되 결론은 보류.</li>
+          <li>해적 징후 발견 시 은닉·수신만 수행.</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>식물 돔 긴급 레시피</h3>
+        <ul>
+          <li>감자: 절수 모드, 광도 중간</li>
+          <li>퀴노아: 염류 축적 방지</li>
+          <li>유산균: 폐열 회수 구간</li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <div>© SOLARIS-37 · 작성자: <strong>한송이</strong> (Mars Botanist)</div>
+      <div class="tiny">오프라인 전용 문서 · Pure HTML+CSS</div>
+    </footer>
+  </div>
+</body>
+</html>
